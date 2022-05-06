@@ -19,7 +19,7 @@ import PIL.Image as pil
 import cv2
 import numpy as np
 from osgeo import gdal, osr
-
+import argparse
 
 # ------------------Interchange between WGS-84 and Web Mercator-------------------------
 # WGS-84 to Web Mercator
@@ -309,8 +309,6 @@ def download_tiles(urls, multi=10):
 
 
 # ---------------------------------------------------------
-
-# ---------------------------------------------------------
 def main(left, top, right, bottom, zoom, filePath, style='s', server="Google China"):
     """
     Download images based on spatial extent.
@@ -368,10 +366,25 @@ def main(left, top, right, bottom, zoom, filePath, style='s', server="Google Chi
 
 
 # ---------------------------------------------------------
+# ---------------------------------------------------------
+def get_args():
+    ap = argparse.ArgumentParser()
+
+    ap.add_argument("-l", "--left", required=True, type=float, help="left LONG")
+    ap.add_argument("-r", "--right", required=True, type=float, help="right LONG")
+    ap.add_argument("-t", "--top", required=True, type=float, help="top LAT")
+    ap.add_argument("-b", "--bottom", required=True, type=float, help="bottom LAT")
+    ap.add_argument("-z", "--zoom", required=True, type=int, help="zoom")
+    ap.add_argument("-o", "--output_file", required=True, help="output file path")
+
+    return vars(ap.parse_args())
+
+
 if __name__ == '__main__':
+    args = get_args()
     start_time = time.time()
 
-    main(100.361, 38.866, 100.386, 38.839, 13, r'D:\Documents\Temp\test.tif', server="Google")
+    main(args['left'], args['top'], args['right'], args['bottom'], args['zoom'], args['output_file'], server="Google")
 
     end_time = time.time()
     print('lasted a total of {:.2f} seconds'.format(end_time - start_time))
